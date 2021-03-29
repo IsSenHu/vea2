@@ -14,7 +14,8 @@ const getters = {
   businessSettings: state => state.user.businessSettings,
   justLogin: state => state.user.justLogin,
   permission_routes: state => state.permission.routes,
-  errorLogs: state => state.errorLog.logs
+  errorLogs: state => state.errorLog.logs,
+  clientId: state => 'IACAA'
 }
 
 export default getters

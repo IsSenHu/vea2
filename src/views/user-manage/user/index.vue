@@ -3,7 +3,6 @@
     <div class="filter-container">
       <el-input v-model="listQuery.customParams.userId" placeholder="ID" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.customParams.username" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.customParams.email" placeholder="电子邮箱" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
@@ -113,6 +112,7 @@
         <el-form-item v-if="positions.length > 0" label="职位">
           <el-select
             v-model="user.customizeInfo.positionId"
+            style="width: 400px;"
             placeholder="请选择职位"
             @change="positionChange"
           >
@@ -127,6 +127,7 @@
         <el-form-item v-if="positionUsers.length > 0" label="上级">
           <el-select
             v-model="user.customizeInfo.superiorId"
+            style="width: 400px;"
             placeholder="请选择上级"
             @change="positionChange"
           >
@@ -141,6 +142,7 @@
         <el-form-item label="角色">
           <el-select
             v-model="user.roleId"
+            style="width: 400px;"
             filterable
             remote
             reserve-keyword
@@ -405,7 +407,7 @@ export default {
       const { row } = scope
       const data = {
         userId: row.id,
-        clientId: 'vea-admin',
+        clientId: this.$store.getters.clientId,
         info: JSON.stringify({
           isEnabled: row.customizeInfo.isEnabled
         })
@@ -458,7 +460,8 @@ export default {
       })
     },
     handleEdit(scope) {
-      requestByClient(User, 'get', '/api/user/' + scope.row.id, null, resp => {
+      const clientId = this.$store.getters.clientId
+      requestByClient(User, 'get', '/api/user/' + scope.row.id + '?clientId=' + clientId, null, resp => {
         const respJson = resp.data
         const { code } = respJson
         if (code === 0) {
@@ -471,8 +474,15 @@ export default {
               this.user.isEnabled = respJson.data.isEnabled
               this.user.customizeInfo = JSON.parse(respJson.data.customizeInfo)
               this.user.roleId = resp.data.data
-              this.dialogType = 'edit'
-              this.dialogVisible = true
+              requestByClient(Auth, 'get', '/api/position/findAll', null, resp => {
+                const { code, data } = resp.data
+                if (code === 0) {
+                  this.positions = data
+                  this.positionChange()
+                  this.dialogType = 'edit'
+                  this.dialogVisible = true
+                }
+              })
             }
           })
         }
