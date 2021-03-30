@@ -552,6 +552,15 @@ export default {
         }
       })
     },
+    showFail(error) {
+      this.dialogVisible = false
+      this.$notify({
+        title: '失败',
+        dangerouslyUseHTMLString: true,
+        message: error,
+        type: 'error'
+      })
+    },
     showSuccess() {
       const { username } = this.user
       this.dialogVisible = false
@@ -581,12 +590,16 @@ export default {
                 if (resp.data.code === 0) {
                   this.showSuccess()
                   this.getList()
+                } else {
+                  this.showFail('更新用户成功，更新用户角色失败')
                 }
               })
             } else {
               this.showSuccess()
               this.getList()
             }
+          } else {
+            this.showFail('更新用户失败')
           }
         })
       } else {
@@ -596,6 +609,8 @@ export default {
           if (code === 0) {
             this.showSuccess()
             this.getList()
+          } else {
+            this.showFail('新增用户失败')
           }
         })
       }

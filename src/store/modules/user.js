@@ -50,7 +50,7 @@ export const actions = {
   login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
-      requestByClient(Auth, 'post', '/auth/login', { username: username, password: password, clientId: this.$store.getters.clientId }, resp => {
+      requestByClient(Auth, 'post', '/auth/login', { username: username, password: password, clientId: 'IACAA' }, resp => {
         const respJson = resp.data
         const { code, data } = respJson
         if (code === 0) {
